@@ -1,4 +1,12 @@
-import { IsArray, IsBoolean, IsEmail, IsOptional, IsString, Matches, MinLength } from "class-validator";
+import {
+  IsArray,
+  IsBoolean,
+  IsEmail,
+  IsOptional,
+  IsString,
+  Matches,
+  MinLength,
+} from "class-validator";
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -13,7 +21,6 @@ export class User {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-
   @IsString()
   @IsEmail()
   @Column("text", {
@@ -21,31 +28,25 @@ export class User {
   })
   email: string;
 
-
   @IsString()
-  @MinLength(6)
-  @Matches(/(?:(?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-    message: 'password Uppercase, lowercase, number',
-  })
+  @MinLength(6, { message: "password minimo 6 caracteres" })
+  // @Matches(/(?:(?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
+  //   message: "password Uppercase, lowercase, number",
+  // })
   @Column("text")
   password: string;
-
 
   @IsString()
   @MinLength(1)
   @Column("text")
   name: string;
 
-
-  
   @IsOptional()
   @IsBoolean()
   @Column("bool", {
     default: false,
   })
   isActive: boolean;
-
-
 
   @IsString({ each: true })
   @IsArray()
@@ -56,13 +57,11 @@ export class User {
   })
   roles: string[];
 
-
   @IsString()
   @Column("text", {
     default: generarId(),
   })
   token: string;
-
 
   @IsOptional()
   @IsString()
@@ -70,13 +69,11 @@ export class User {
   @Column("text")
   phone: string;
 
-
   @IsOptional()
   @IsString()
   @MinLength(1)
   @Column("text")
   address: string;
-
 
   @IsOptional()
   @IsString()

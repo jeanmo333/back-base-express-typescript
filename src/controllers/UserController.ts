@@ -7,17 +7,8 @@ import { User } from "../entities/User";
 import generarId from "../helpers/generarId";
 import emailForgetPassword from "../helpers/emailForgetPassword";
 import emailRegister from "../helpers/emailRegister";
-
-type Data =
-  | { message: string }
-  | {
-      token: string;
-      user: {
-        email: string;
-        name: string;
-        role: string;
-      };
-    };
+import { IUser } from "../interfaces";
+import { MessagePort } from "worker_threads";
 
 export class UserController {
   async create(req: Request, res: Response) {
@@ -28,7 +19,7 @@ export class UserController {
       phone = "",
       address = "",
       web = "",
-    } = req.body;
+    } = req.body as IUser;
 
     if ([name, email, password].includes("")) {
       throw new BadRequestError("Hay Campo vacio");
@@ -60,9 +51,9 @@ export class UserController {
       //     token: newUser.token,
       //   });
 
-      const { password: _, ...user } = newUser;
+      //const { password: _, ...user } = newUser;
 
-      return res.status(201).json(user);
+      return res.status(201).json({ message: "Registrado con exito" });
     } catch (error) {
       console.log(error);
       throw new BadRequestError("revisar log servidor");
@@ -142,9 +133,9 @@ export class UserController {
       throw new BadRequestError("revisar log servidor");
     }
   }
-/***************************************************************************** */
+  /***************************************************************************** */
   async updateUserByAdmin(req: Request, res: Response) {
-	const { id } = req.params;
+    const { id } = req.params;
     const { email } = req.body;
 
     const user = await userRepository.findOneBy({ id });
@@ -190,9 +181,9 @@ export class UserController {
       throw new BadRequestError("Email o password no valido");
     }
 
-    if (!user.isActive) {
-      throw new BadRequestError("Tu cuenta no ha sido confirmado");
-    }
+    // if (!user.isActive) {
+    //   throw new BadRequestError("Tu cuenta no ha sido confirmado");
+    // }
 
     const token = jwt.sign({ id: user.id }, process.env.JWT_PASS ?? "", {
       expiresIn: "8h",
@@ -307,7 +298,7 @@ export class UserController {
 
     const user = await userRepository.findOneBy({ id });
     if (!user) {
-		throw new BadRequestError("usuario no existe");
+      throw new BadRequestError("usuario no existe");
     }
 
     if (user.email !== req.body.email) {
